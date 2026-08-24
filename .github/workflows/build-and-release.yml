@@ -20,11 +20,10 @@ env:
   ACR_REGISTRY: crpi-vrso5s2zv7dk1hk1.cn-wulanchabu.personal.cr.aliyuncs.com
   IMAGE_REPOSITORY: crpi-vrso5s2zv7dk1hk1.cn-wulanchabu.personal.cr.aliyuncs.com/pangxiaoyin/free-play-view
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
+  # =========================================================================
+  # 任务 1：多端全量编译、产物合规检验与 Release 归档包生成
+  # =========================================================================
   build-and-verify:
     name: 🚀 Build, Verify & Package Multi-App
     runs-on: ubuntu-latest
@@ -83,7 +82,7 @@ jobs:
           # 双端聚合全量网站包
           cd dist-public && zip -r ../release-packages/casual-games-all-in-one.zip ./* && cd ..
 
-      # 10. 上传多端构建物至 GitHub Artifacts
+      # 10. 上传多端构建物至 GitHub Artifacts (可永久保存并一键下载)
       - name: Upload Multi-Platform Build Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -91,32 +90,9 @@ jobs:
           path: release-packages/
           retention-days: 30
 
-      # 11. 配置并上传 GitHub Pages 部署产物
-      - name: Setup GitHub Pages
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        uses: actions/configure-pages@v5
-
-      - name: Upload GitHub Pages Artifact
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist-public/
-
-  # 12. 自动部署到 GitHub Pages 在线预览
-  deploy-github-pages:
-    name: 🌐 Deploy to GitHub Pages
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    needs: build-and-verify
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-  # 13. 构建 Docker 镜像并推送至阿里云 ACR (对齐 idc_console 与 pangxiaoyin_view)
+  # =========================================================================
+  # 任务 2：构建 Docker 镜像并推送至阿里云 ACR (对齐 idc_console / pangxiaoyin_view)
+  # =========================================================================
   push-to-aliyun-acr:
     name: 🐳 Build & Push Docker Image to Aliyun ACR
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
