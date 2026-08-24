@@ -6,7 +6,8 @@ services:
     container_name: free-play-view-web
     restart: always
     ports:
-      - "${HOST_PORT:-8080}:80"
+      # 绑定至 127.0.0.2 本地专属回环地址，防止公网端口裸奔，供 1Panel 反向代理精准直连
+      - "127.0.0.2:8080:80"
     deploy:
       resources:
         limits:
