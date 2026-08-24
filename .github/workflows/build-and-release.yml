@@ -1,4 +1,4 @@
-name: Build, Verify and Release to GitHub
+name: Build, Verify and Release to GitHub & Aliyun ACR
 
 on:
   push:
@@ -15,6 +15,10 @@ permissions:
   contents: write
   pages: write
   id-token: write
+
+env:
+  ACR_REGISTRY: crpi-vrso5s2zv7dk1hk1.cn-wulanchabu.personal.cr.aliyuncs.com
+  IMAGE_REPOSITORY: crpi-vrso5s2zv7dk1hk1.cn-wulanchabu.personal.cr.aliyuncs.com/pangxiaoyin/free-play-view
 
 concurrency:
   group: "pages"
@@ -87,7 +91,7 @@ jobs:
           path: release-packages/
           retention-days: 30
 
-      # 11. 配置 GitHub Pages 部署产物
+      # 11. 配置并上传 GitHub Pages 部署产物
       - name: Setup GitHub Pages
         if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
         uses: actions/configure-pages@v5
@@ -111,3 +115,38 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  # 13. 构建 Docker 镜像并推送至阿里云 ACR (对齐 idc_console 与 pangxiaoyin_view)
+  push-to-aliyun-acr:
+    name: 🐳 Build & Push Docker Image to Aliyun ACR
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Aliyun ACR
+        if: secrets.ACR_USERNAME != '' && secrets.ACR_PASSWORD != ''
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.ACR_REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      - name: Build and push Docker image
+        if: secrets.ACR_USERNAME != '' && secrets.ACR_PASSWORD != ''
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          push: true
+          provenance: false
+          tags: |
+            ${{ env.IMAGE_REPOSITORY }}:${{ github.run_number }}
+            ${{ env.IMAGE_REPOSITORY }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
