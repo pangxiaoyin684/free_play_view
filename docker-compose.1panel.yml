@@ -1,0 +1,28 @@
+name: free-play-view
+
+services:
+  web:
+    image: ${APP_IMAGE:-crpi-vrso5s2zv7dk1hk1.cn-wulanchabu.personal.cr.aliyuncs.com/pangxiaoyin/free-play-view:latest}
+    container_name: free-play-view-web
+    restart: always
+    ports:
+      - "${HOST_PORT:-8080}:80"
+    deploy:
+      resources:
+        limits:
+          cpus: '${CPU_LIMIT:-1.0}'
+          memory: ${MEMORY_LIMIT:-512M}
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "1panel.app=free-play-view"
+      - "1panel.name=休闲游戏与百宝箱平台"
