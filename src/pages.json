@@ -1,0 +1,150 @@
+{
+  "pages": [
+    {
+      "path": "pages/tabbar/games/index",
+      "style": {
+        "navigationBarTitleText": "🎮 游戏大厅",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#4f46e5",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tabbar/tools/index",
+      "style": {
+        "navigationBarTitleText": "🧰 实用百宝箱",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#0891b2",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tabbar/profile/index",
+      "style": {
+        "navigationBarTitleText": "👤 个人中心",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor": "#4f46e5",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/auth/login",
+      "style": {
+        "navigationBarTitleText": "用户登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/games/match3/index",
+      "style": {
+        "navigationBarTitleText": "宝石消消乐",
+        "navigationBarBackgroundColor": "#ec4899",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/games/plane-war/index",
+      "style": {
+        "navigationBarTitleText": "全民飞机大战",
+        "navigationBarBackgroundColor": "#090d16",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/games/link-game/index",
+      "style": {
+        "navigationBarTitleText": "欢乐连连看",
+        "navigationBarBackgroundColor": "#059669",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tools/decision-wheel/index",
+      "style": {
+        "navigationBarTitleText": "命运大转盘",
+        "navigationBarBackgroundColor": "#d97706",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tools/countdown/index",
+      "style": {
+        "navigationBarTitleText": "倒数日与纪念日",
+        "navigationBarBackgroundColor": "#6366f1",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tools/memo/index",
+      "style": {
+        "navigationBarTitleText": "便签备忘随手记",
+        "navigationBarBackgroundColor": "#0f766e",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tools/ai-remover/index",
+      "style": {
+        "navigationBarTitleText": "AI 消除与去水印",
+        "navigationBarBackgroundColor": "#6d28d9",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tools/id-photo/index",
+      "style": {
+        "navigationBarTitleText": "AI 智能证件照",
+        "navigationBarBackgroundColor": "#1d4ed8",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tools/dice/index",
+      "style": {
+        "navigationBarTitleText": "欢乐摇骰子",
+        "navigationBarBackgroundColor": "#b91c1c",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/tools/mid-autumn-love/index",
+      "style": {
+        "navigationBarTitleText": "🥮 中秋玉兔告白与祝福",
+        "navigationBarBackgroundColor": "#1e1b4b",
+        "navigationBarTextStyle": "white"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "休闲游戏与百宝箱",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F1F5F9"
+  },
+  "tabBar": {
+    "color": "#94a3b8",
+    "selectedColor": "#4f46e5",
+    "borderStyle": "white",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/tabbar/games/index",
+        "iconPath": "static/icons/tab-game.png",
+        "selectedIconPath": "static/icons/tab-game-active.png",
+        "text": "游戏大厅"
+      },
+      {
+        "pagePath": "pages/tabbar/tools/index",
+        "iconPath": "static/icons/tab-tool.png",
+        "selectedIconPath": "static/icons/tab-tool-active.png",
+        "text": "百宝箱"
+      },
+      {
+        "pagePath": "pages/tabbar/profile/index",
+        "iconPath": "static/icons/tab-user.png",
+        "selectedIconPath": "static/icons/tab-user-active.png",
+        "text": "我的"
+      }
+    ]
+  }
+}

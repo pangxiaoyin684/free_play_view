@@ -1,0 +1,113 @@
+name: Build, Verify and Release to GitHub
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-verify:
+    name: 🚀 Build, Verify & Package Multi-App
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 检出代码仓库
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. 安装与配置 Node.js 20 编译环境
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      # 3. 安装项目全量依赖
+      - name: Install Dependencies
+        run: npm ci
+
+      # 4. 构建 PC Web 管理后台 (Vite + Vue 3)
+      - name: Build PC Web Admin
+        run: npm run build:admin
+
+      # 5. 构建 H5 移动前台 (UniApp + Vue 3)
+      - name: Build Mobile H5 Client
+        run: npm run build:h5
+
+      # 6. 构建 微信小程序端
+      - name: Build WeChat Mini-Program
+        run: npm run build:mp-weixin
+
+      # 7. 运行自动化构建物与安全合规性校验
+      - name: Run Build Verification
+        run: node scripts/verify_build.js
+
+      # 8. 聚合前端静态资源 (根路径为 H5 移动前台，/admin/ 路径为 PC 运营管理后台)
+      - name: Prepare Aggregated Distribution Site
+        run: |
+          mkdir -p dist-public
+          cp -r dist/build/h5/* dist-public/
+          mkdir -p dist-public/admin
+          cp -r dist-admin/* dist-public/admin/
+
+      # 9. 压缩并打包分发 Zip 归档文件
+      - name: Package Distribution Zips
+        run: |
+          mkdir -p release-packages
+          # 移动端 H5 压缩包
+          cd dist/build/h5 && zip -r ../../../release-packages/casual-games-h5.zip ./* && cd ../../..
+          # PC Web 管理后台压缩包
+          cd dist-admin && zip -r ../release-packages/casual-games-admin.zip ./* && cd ..
+          # 微信小程序端压缩包
+          cd dist/build/mp-weixin && zip -r ../../../release-packages/casual-games-mp-weixin.zip ./* && cd ../../..
+          # 双端聚合全量网站包
+          cd dist-public && zip -r ../release-packages/casual-games-all-in-one.zip ./* && cd ..
+
+      # 10. 上传多端构建物至 GitHub Artifacts
+      - name: Upload Multi-Platform Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: casual-games-release-packages
+          path: release-packages/
+          retention-days: 30
+
+      # 11. 配置 GitHub Pages 部署产物
+      - name: Setup GitHub Pages
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: actions/configure-pages@v5
+
+      - name: Upload GitHub Pages Artifact
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-public/
+
+  # 12. 自动部署到 GitHub Pages 在线预览
+  deploy-github-pages:
+    name: 🌐 Deploy to GitHub Pages
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

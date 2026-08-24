@@ -1,0 +1,36 @@
+# Logs & Runtime
+node_modules
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# UniApp & Vite Build Outputs
+dist/
+dist-admin/
+unpackage/
+bin/
+
+# Local Environment & Secrets
+.env.local
+.env.*.local
+*.key
+*.pem
+id_rsa
+*.secret
+
+# IDE & Editor
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS Temporary Files
+.DS_Store
+Thumbs.db
